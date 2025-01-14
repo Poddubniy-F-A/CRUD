@@ -2,7 +2,8 @@ package com.example.demo.controllers;
 
 import com.example.demo.model.User;
 import com.example.demo.services.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import lombok.extern.java.Log;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,16 +11,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-@Controller
-public class UserController {
-    @Autowired
-    private UserService userService;
+import java.util.logging.Level;
 
-    @GetMapping("/users")
-    public String findAll(Model model){
-        model.addAttribute("users", userService.findAll());
-        return "user-list";
-    }
+@Controller
+@AllArgsConstructor
+@Log
+public class UserController {
+    private final UserService userService;
 
     @GetMapping("/user-create")
     public String createUserForm(User user){
@@ -29,12 +27,7 @@ public class UserController {
     @PostMapping("/user-create")
     public String createUser(User user){
         userService.saveUser(user);
-        return "redirect:/users";
-    }
-
-    @GetMapping("user-delete/{id}")
-    public String deleteUser(@PathVariable("id") Integer id) {
-        userService.deleteById(id);
+        log.log(Level.INFO, "New user " + user + " was created");
         return "redirect:/users";
     }
 
@@ -47,6 +40,20 @@ public class UserController {
     @PostMapping("/user-update")
     public String updateUser(@ModelAttribute("user") User user){
         userService.updateUser(user);
+        log.log(Level.INFO, user.getId() + " user was updated");
         return "redirect:/users";
+    }
+
+    @GetMapping("user-delete/{id}")
+    public String deleteUser(@PathVariable("id") Integer id) {
+        userService.deleteById(id);
+        log.log(Level.INFO, id + " user was updated");
+        return "redirect:/users";
+    }
+
+    @GetMapping("/users")
+    public String showAll(Model model){
+        model.addAttribute("users", userService.findAll());
+        return "user-list";
     }
 }

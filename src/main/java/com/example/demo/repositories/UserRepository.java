@@ -1,6 +1,7 @@
 package com.example.demo.repositories;
 
 import com.example.demo.model.User;
+import lombok.AllArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -8,8 +9,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
+@AllArgsConstructor
 public class UserRepository {
-    private static final RowMapper<User> userRowMapper = (r, i) -> {
+    private static final RowMapper<User> userRowMapper = (r, _) -> {
         User rowObject = new User();
         rowObject.setId(r.getInt("id"));
         rowObject.setFirstName(r.getString("firstName"));
@@ -18,35 +20,26 @@ public class UserRepository {
     };
 
     private final JdbcTemplate jdbc;
-
-    public UserRepository(JdbcTemplate jdbc) {
-        this.jdbc = jdbc;
-    }
+    private final UsersSQLQueries queries;
 
     public User getById(int id) {
-        return jdbc.query("SELECT * FROM userTable WHERE id = ?", new Object[]{id}, userRowMapper).
+        return jdbc.query(queries.getGetById(), new Object[]{id}, userRowMapper).
                 stream().findFirst().orElse(null);
     }
 
     public List<User> findAll() {
-        return jdbc.query("SELECT * FROM userTable", userRowMapper);
+        return jdbc.query(queries.getGetAll(), userRowMapper);
     }
 
     public void save(User user) {
-        jdbc.update(
-                "INSERT INTO userTable (firstName,lastName) VALUES (?, ?)",
-                user.getFirstName(), user.getLastName()
-        );
+        jdbc.update(queries.getInsert(), user.getFirstName(), user.getLastName());
     }
 
     public void deleteById(int id) {
-        jdbc.update("DELETE FROM userTable WHERE id=?", id);
+        jdbc.update(queries.getDeleteById(), id);
     }
 
     public void update(User user) {
-        jdbc.update(
-                "UPDATE userTable SET firstName = ?, lastName = ? WHERE id = ?",
-                user.getFirstName(), user.getLastName(), user.getId()
-        );
+        jdbc.update(queries.getUpdateById(), user.getFirstName(), user.getLastName(), user.getId());
     }
 }

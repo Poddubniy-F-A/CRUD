@@ -2,17 +2,15 @@ package com.example.demo.services;
 
 import com.example.demo.model.User;
 import com.example.demo.repositories.UserRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     public User getUserById(int id) {
         return userRepository.getById(id);
