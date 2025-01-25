@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import java.util.logging.Level;
 
 @Controller
-@AllArgsConstructor
 @Log
+@AllArgsConstructor
 public class UserController {
     private final UserService userService;
 
@@ -31,7 +31,7 @@ public class UserController {
         return "redirect:/users";
     }
 
-    @GetMapping("user-update/{id}")
+    @GetMapping("/user-update/{id}")
     public String updateUserForm(@PathVariable("id") Integer id, Model model) {
         model.addAttribute("user", userService.getUserById(id));
         return "user-update";
@@ -40,14 +40,14 @@ public class UserController {
     @PostMapping("/user-update")
     public String updateUser(@ModelAttribute("user") User user){
         userService.updateUser(user);
-        log.log(Level.INFO, user.getId() + " user was updated");
+        log.log(Level.INFO, "User " + user.getId() + " was updated");
         return "redirect:/users";
     }
 
-    @GetMapping("user-delete/{id}")
+    @GetMapping("/user-delete/{id}")
     public String deleteUser(@PathVariable("id") Integer id) {
         userService.deleteById(id);
-        log.log(Level.INFO, id + " user was updated");
+        log.log(Level.INFO, "User " + id + " was deleted");
         return "redirect:/users";
     }
 

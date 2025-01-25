@@ -1,5 +1,6 @@
 package com.example.demo.services;
 
+import com.example.demo.aspects.TrackUserAction;
 import com.example.demo.model.User;
 import com.example.demo.repositories.UserRepository;
 import lombok.AllArgsConstructor;
@@ -20,14 +21,17 @@ public class UserService {
         return userRepository.findAll();
     }
 
+    @TrackUserAction
     public void saveUser(User user){
         userRepository.save(user);
     }
 
+    @TrackUserAction
     public void deleteById(int id) {
         userRepository.deleteById(id);
     }
 
+    @TrackUserAction
     public void updateUser(User user) {
         userRepository.update(user);
     }
